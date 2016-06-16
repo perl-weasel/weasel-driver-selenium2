@@ -45,6 +45,7 @@ use strict;
 use warnings;
 
 use Moose;
+use MIME::Base64;
 use Selenium::Remote::Driver;
 use Selenium::Waiter;
 use Weasel::DriverRole;
@@ -62,7 +63,7 @@ Internal. Holds the reference to the C<Selenium::Remote::Driver> instance.
 =cut
 
 has '_driver' => (is => 'rw',
-                 isa => 'Selenium::Remote::Driver',
+                  isa => 'Selenium::Remote::Driver',
                  );
 
 =item wait_timeout
@@ -155,7 +156,9 @@ sub find_all {
     #   or a native Selenium::Remote::WebElement
     $parent_id = $self->_resolve_id($parent_id);
 
-    return $self->_driver->find_child_elements($parent_id, $locator, $scheme);
+    my @rv =
+        $self->_driver->find_child_elements($parent_id, $locator, $scheme // 'xpath');
+    return wantarray ? @rv : \@rv;
 }
 
 =item get
@@ -247,6 +250,25 @@ sub set_selected {
     $self->_resolve_id($id)->set_selected($value);
 }
 
+=item screenshot($fh)
+
+=cut
+
+sub screenshot {
+    my ($self, $fh) = @_;
+
+    print $fh MIME::Base64::decode($self->_driver->screenshot);
+}
+
+=item tag_name($elem)
+
+=cut
+
+sub tag_name {
+    my ($self, $element) = @_;
+
+    return $element->get_tag_name;
+}
 
 =back
 
@@ -301,8 +323,13 @@ sub set_window_size {
 sub _resolve_id {
     my ($self, $id) = @_;
 
-    return (ref $id) ? $id :
-        (shift @{ $self->_driver->find_elements($id,'xpath') });
+    if (ref $id) {
+        return $id;
+    }
+    else {
+        my @rv = $self->_driver->find_elements($id,'xpath');
+        return (shift @rv);
+    }
 }
 
 sub _scroll {
