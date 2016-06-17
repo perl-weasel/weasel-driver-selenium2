@@ -216,6 +216,26 @@ sub get_attribute {
     return $self->_resolve_id($id)->get_attribute($att);
 }
 
+=item get_text($id)
+
+=cut
+
+sub get_text {
+    my ($self, $id) = @_;
+
+    return $self->_resolve_id($id)->get_text;
+}
+
+=item is_displayed($id)
+
+=cut
+
+sub is_displayed {
+    my ($self, $id) = @_;
+
+    return $self->_resolve_id($id)->is_displayed;
+}
+
 =item set_attribute($id, $att_name, $value)
 
 =cut
