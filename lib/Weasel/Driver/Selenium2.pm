@@ -260,14 +260,24 @@ sub screenshot {
     print $fh MIME::Base64::decode($self->_driver->screenshot);
 }
 
+=item send_keys($element_id, @keys)
+
+=cut
+
+sub send_keys {
+    my ($self, $element_id, @keys) = @_;
+
+    return $self->_resolve_id($element_id)->send_keys(@keys);
+}
+
 =item tag_name($elem)
 
 =cut
 
 sub tag_name {
-    my ($self, $element) = @_;
+    my ($self, $element_id) = @_;
 
-    return $element->get_tag_name;
+    return $self->_resolve_id($element_id)->get_tag_name;
 }
 
 =back
