@@ -181,6 +181,16 @@ sub wait_for {
     Selenium::Waiter::wait_until { $callback->() };
 }
 
+=item clear
+
+=cut
+
+sub clear {
+    my ($self, $id) = @_;
+
+    $self->_resolve_id($id)->clear;
+}
+
 =item click
 
 =cut
