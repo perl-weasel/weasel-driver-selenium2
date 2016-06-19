@@ -156,8 +156,15 @@ sub find_all {
     #   or a native Selenium::Remote::WebElement
     $parent_id = $self->_resolve_id($parent_id);
 
-    my @rv =
-        $self->_driver->find_child_elements($parent_id, $locator, $scheme // 'xpath');
+    my @rv;
+    my $_driver = $self->_driver;
+    if ($parent_id eq '/html') {
+        @rv = $_driver->find_child_elements($locator, $scheme // 'xpath');
+    }
+    else {
+        @rv = $_driver->find_child_elements($parent_id, $locator,
+                                            $scheme // 'xpath');
+    }
     return wantarray ? @rv : \@rv;
 }
 
