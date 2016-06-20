@@ -44,12 +44,12 @@ package Weasel::Driver::Selenium2;
 use strict;
 use warnings;
 
-use Moose;
 use MIME::Base64;
 use Selenium::Remote::Driver;
-use Selenium::Waiter;
+use Time::HiRes;
 use Weasel::DriverRole;
 
+use Moose;
 with 'Weasel::DriverRole';
 
 =head1 ATTRIBUTES
@@ -75,11 +75,11 @@ Change by calling C<set_wait_timeout>.
 
 =cut
 
-
 has 'wait_timeout' => (is => 'rw',
                        writer => '_set_wait_timeout',
                        isa => 'Int',
-                       );
+    );
+
 
 =item window_size
 
@@ -154,14 +154,14 @@ sub find_all {
     my ($self, $parent_id, $locator, $scheme) = @_;
     # $parent_id is either a string containing an xpath
     #   or a native Selenium::Remote::WebElement
-    $parent_id = $self->_resolve_id($parent_id);
 
     my @rv;
     my $_driver = $self->_driver;
     if ($parent_id eq '/html') {
-        @rv = $_driver->find_child_elements($locator, $scheme // 'xpath');
+        @rv = $_driver->find_elements($locator, $scheme // 'xpath');
     }
     else {
+        $parent_id = $self->_resolve_id($parent_id);
         @rv = $_driver->find_child_elements($parent_id, $locator,
                                             $scheme // 'xpath');
     }
@@ -183,9 +183,19 @@ sub get {
 =cut
 
 sub wait_for {
-    my ($self, $callback) = @_;
+    my ($self, $callback, %args) = @_;
 
-    Selenium::Waiter::wait_until { $callback->() };
+    # Do NOT use Selenium::Waiter, it eats all exceptions!
+    my $end = time() + $args{retry_timeout};
+    my $rv;
+    do {
+        $rv = $callback->();
+        return $rv if $rv;
+
+        sleep $args{poll_delay};
+    } until (time() > $end);
+
+    return;
 }
 
 =item clear
