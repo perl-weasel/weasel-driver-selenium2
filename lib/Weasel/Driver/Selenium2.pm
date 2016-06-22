@@ -34,7 +34,7 @@ Weasel::Driver::Selenium2 - Weasel driver wrapping Selenium::Remote::Driver
 
 =head1 DESCRIPTION
 
-This module implements the C<Weasel::DriverRole> protocol, wrapping
+This module implements the L<Weasel::DriverRole> protocol, wrapping
 Selenium::Remote::Driver.
 
 =cut
@@ -109,6 +109,9 @@ has 'caps' => (is => 'ro',
 =back
 
 =head1 IMPLEMENTATION OF Weasel::DriverRole
+
+For the documentation of the methods in this section,
+see L<Weasel::DriverRole>.
 
 =over
 
