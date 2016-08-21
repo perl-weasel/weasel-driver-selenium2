@@ -5,7 +5,7 @@ Weasel::Driver::Selenium2 - Weasel driver wrapping Selenium::Remote::Driver
 
 =head1 VERSION
 
-0.01
+0.02
 
 =head1 SYNOPSIS
 
@@ -201,6 +201,7 @@ sub wait_for {
     return;
 }
 
+
 =item clear
 
 =cut
@@ -234,6 +235,15 @@ sub dblclick {
     my ($self) = @_;
 
     $self->_driver->dblclick;
+}
+
+=item execute_script
+
+=cut
+
+sub execute_script {
+    my $self = shift;
+    $self->_driver->execute_script(@_);
 }
 
 =item get_attribute($id, $att_name)
