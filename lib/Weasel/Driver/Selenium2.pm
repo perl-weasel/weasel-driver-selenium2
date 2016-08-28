@@ -129,6 +129,8 @@ sub implements {
 
 sub start {
     my $self = shift;
+    my $browser = $self->{caps}{browser_name} =~ /\$\{([^\}]+)\}/;
+    $self->{caps}{browser_name} = $ENV{$1} if $browser;
     my $driver = Selenium::Remote::Driver->new(%{$self->caps});
 
     $self->_driver($driver);

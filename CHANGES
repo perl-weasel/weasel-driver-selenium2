@@ -1,3 +1,5 @@
+ ** 0.02 / 2016-08-26
+  - Add the possibility to use an environment variable for desired browser
 
  ** 0.01 / 2016-06-??
   - Initial release to replace LedgerSMB's
