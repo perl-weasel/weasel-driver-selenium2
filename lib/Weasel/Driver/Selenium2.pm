@@ -134,9 +134,11 @@ sub start {
     my $self = shift;
 
     do {
-        my $capability_name = $_;
-        my $capability = $self->{caps}{$capability_name} =~ /\$\{([^\}]+)\}/;
-        $self->{caps}{$capability_name} = $ENV{$1} if $capability;
+        if ( defined  $self->{caps}{$_}) {
+            my $capability_name = $_;
+            my $capability = $self->{caps}{$capability_name} =~ /\$\{([^\}]+)\}/;
+            $self->{caps}{$capability_name} = $ENV{$1} if $capability;
+        }
     } for (qw/browser_name remote_server_addr version platform/);
 
     my $driver = Selenium::Remote::Driver->new(%{$self->caps});
