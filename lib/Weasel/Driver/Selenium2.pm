@@ -17,7 +17,7 @@ Weasel::Driver::Selenium2 - Weasel driver wrapping Selenium::Remote::Driver
     wait_timeout => 3000,    # 3000 msec == 3s
     window_size => '1024x1280',
     caps => {
-      port => 4443,
+      port => 4444,
       # ... and other Selenium::Remote::Driver capabilities options
     },
   );
@@ -125,10 +125,22 @@ sub implements {
 
 =item start
 
+A few capabilities can be specified in t/.pherkin.yaml
+Some can even be specified as environment variables, they will be expanded here if present.
+
 =cut
 
 sub start {
     my $self = shift;
+
+    do {
+        if ( defined  $self->{caps}{$_}) {
+            my $capability_name = $_;
+            my $capability = $self->{caps}{$capability_name} =~ /\$\{([^\}]+)\}/;
+            $self->{caps}{$capability_name} = $ENV{$1} if $capability;
+        }
+    } for (qw/browser_name remote_server_addr version platform/);
+
     my $driver = Selenium::Remote::Driver->new(%{$self->caps});
 
     $self->_driver($driver);
@@ -308,6 +320,16 @@ sub set_selected {
     # The other solution is to use is_selected to verify the current state
     # and toggling by click()ing
     $self->_resolve_id($id)->set_selected($value);
+}
+
+=item get_page_source($fh)
+
+=cut
+
+sub get_page_source {
+    my ($self) = @_;
+
+    return $self->_driver->get_page_source();
 }
 
 =item screenshot($fh)
