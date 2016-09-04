@@ -1,4 +1,7 @@
- ** 0.03 / 2016-09-01
+** 0.04 / 2016-09-04
+   - Declare 'our $VERSION' for version detection by cpanm
+
+** 0.03 / 2016-09-01
   - Extend the possibility to use an environment variable to others capabilities,
     such as remote_server_addr, platform and version.
   - Fix documented port
