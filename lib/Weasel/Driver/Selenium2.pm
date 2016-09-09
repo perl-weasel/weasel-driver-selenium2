@@ -5,7 +5,7 @@ Weasel::Driver::Selenium2 - Weasel driver wrapping Selenium::Remote::Driver
 
 =head1 VERSION
 
-0.04
+0.05
 
 =head1 SYNOPSIS
 
@@ -52,7 +52,7 @@ use Weasel::DriverRole;
 use Moose;
 with 'Weasel::DriverRole';
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 
 =head1 ATTRIBUTES
@@ -123,7 +123,7 @@ see L<Weasel::DriverRole>.
 =cut
 
 sub implements {
-    return '0.01';
+    return '0.02';
 }
 
 =item start
@@ -271,6 +271,16 @@ sub get_attribute {
     return $self->_resolve_id($id)->get_attribute($att);
 }
 
+=item get_page_source($fh)
+
+=cut
+
+sub get_page_source {
+    my ($self) = @_;
+
+    return $self->_driver->get_page_source();
+}
+
 =item get_text($id)
 
 =cut
@@ -323,16 +333,6 @@ sub set_selected {
     # The other solution is to use is_selected to verify the current state
     # and toggling by click()ing
     $self->_resolve_id($id)->set_selected($value);
-}
-
-=item get_page_source($fh)
-
-=cut
-
-sub get_page_source {
-    my ($self) = @_;
-
-    return $self->_driver->get_page_source();
 }
 
 =item screenshot($fh)

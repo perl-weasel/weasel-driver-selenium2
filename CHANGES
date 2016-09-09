@@ -1,3 +1,6 @@
+** 0.05 / 2016-09-09
+   - Add 'get_page_source' API, increasing implementation to 0.02 compat
+
 ** 0.04 / 2016-09-04
    - Declare 'our $VERSION' for version detection by cpanm
 
