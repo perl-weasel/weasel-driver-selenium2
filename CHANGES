@@ -1,3 +1,6 @@
+** 0.06 / 2016-10-03
+   - Make 'get_page_source' write info a file
+
 ** 0.05 / 2016-09-09
    - Add 'get_page_source' API, increasing implementation to 0.02 compat
 
