@@ -124,7 +124,7 @@ see L<Weasel::DriverRole>.
 =cut
 
 sub implements {
-    return '0.02';
+    return '0.03';
 }
 
 =item start
@@ -159,9 +159,9 @@ sub start {
 
 =cut
 
-use Data::Printer;
 sub error_handler {
     my ($self,$error) = @_;
+    #TODO: We expect/need to pass on STALE exceptions but should handle others
     return $error;
 }
 
