@@ -145,7 +145,7 @@ sub start {
         }
     } for (qw/browser_name remote_server_addr version platform error_handler/);
 
-    $self->{caps}{error_handler} = \&error_handler if !defined($self->{caps}{error_handler});
+#    $self->{caps}{error_handler} = \&error_handler if !defined($self->{caps}{error_handler});
 
     my $driver = Selenium::Remote::Driver->new(%{$self->caps});
 
