@@ -161,7 +161,27 @@ sub start {
 
 sub error_handler {
     my ($self,$error) = @_;
-    #TODO: We expect/need to pass on STALE exceptions but should handle others
+    #TODO: We expect/need to pass on STALE exceptions but should handle others from the list below
+#	NO_SUCH_ELEMENT
+#	NO_SUCH_FRAME
+#	UNKNOWN_COMMAND
+#	STALE_ELEMENT_REFERENCE
+#	ELEMENT_NOT_VISIBLE
+#	INVALID_ELEMENT_STATE
+#	UNKNOWN_ERROR
+#	ELEMENT_IS_NOT_SELECTABLE
+#	XPATH_LOOKUP_ERROR
+#	Timeout
+#	NO_SUCH_WINDOW
+#	INVALID_COOKIE_DOMAIN
+#	UNABLE_TO_SET_COOKIE
+#	UNEXPECTED_ALERT_OPEN
+#	NO_ALERT_OPEN_ERROR
+#	SCRIPT_TIMEOUT
+#	INVALID_ELEMENT_COORDINATES
+#	IME_NOT_AVAILABLE
+#	IME_ENGINE_ACTIVATION_FAILED
+#	INVALID_SELECTOR
     return $error;
 }
 
