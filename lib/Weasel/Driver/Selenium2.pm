@@ -16,6 +16,7 @@ Weasel::Driver::Selenium2 - Weasel driver wrapping Selenium::Remote::Driver
   my %opts = (
     wait_timeout => 3000,    # 3000 msec == 3s
     window_size => '1024x1280',
+    returns_exceptions => 1,
     caps => {
       port => 4444,
       # ... and other Selenium::Remote::Driver capabilities options
@@ -147,7 +148,7 @@ sub start {
 
 #    $self->{caps}{error_handler} = \&error_handler if !defined($self->{caps}{error_handler});
 
-    my $driver = Selenium::Remote::Driver->new(%{$self->caps});
+    my $driver = Selenium::Remote::Driver->new(%{$self->caps}, returns_exceptions => $self->returns_exceptions // 0);
 
     $self->_driver($driver);
     $self->set_wait_timeout($self->wait_timeout);
