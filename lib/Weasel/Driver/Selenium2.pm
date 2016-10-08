@@ -48,12 +48,13 @@ use MIME::Base64;
 use Selenium::Remote::Driver;
 use Time::HiRes;
 use Weasel::DriverRole;
+use Weasel::Driver::Waiter;
+use Carp;
 
 use Moose;
 with 'Weasel::DriverRole';
 
 our $VERSION = '0.06';
-
 
 =head1 ATTRIBUTES
 
@@ -142,7 +143,9 @@ sub start {
             my $capability = $self->{caps}{$capability_name} =~ /\$\{([^\}]+)\}/;
             $self->{caps}{$capability_name} = $ENV{$1} if $capability;
         }
-    } for (qw/browser_name remote_server_addr version platform/);
+    } for (qw/browser_name remote_server_addr version platform error_handler/);
+
+    $self->{caps}{error_handler} = \&error_handler if !defined($self->{caps}{error_handler});
 
     my $driver = Selenium::Remote::Driver->new(%{$self->caps});
 
@@ -150,6 +153,16 @@ sub start {
     $self->set_wait_timeout($self->wait_timeout);
     $self->set_window_size($self->window_size);
     $self->started(1);
+}
+
+=item error_handler
+
+=cut
+
+use Data::Printer;
+sub error_handler {
+    my ($self,$error) = @_;
+    return $error;
 }
 
 =item stop
@@ -212,6 +225,7 @@ sub wait_for {
 
         sleep $args{poll_delay};
     } until (time() > $end);
+    croak "Browser timed out after " . $args{retry_timeout} . " seconds while waiting for " . $self->_driver->get_current_url if time() > $end;
 
     return;
 }
@@ -271,16 +285,6 @@ sub get_attribute {
     return $self->_resolve_id($id)->get_attribute($att);
 }
 
-=item get_page_source($fh)
-
-=cut
-
-sub get_page_source {
-    my ($self,$fh) = @_;
-
-    print $fh $self->_driver->get_page_source();
-}
-
 =item get_text($id)
 
 =cut
@@ -333,6 +337,16 @@ sub set_selected {
     # The other solution is to use is_selected to verify the current state
     # and toggling by click()ing
     $self->_resolve_id($id)->set_selected($value);
+}
+
+=item get_page_source($fh)
+
+=cut
+
+sub get_page_source {
+    my ($self,$fh) = @_;
+
+    print $fh $self->_driver->get_page_source();
 }
 
 =item screenshot($fh)
