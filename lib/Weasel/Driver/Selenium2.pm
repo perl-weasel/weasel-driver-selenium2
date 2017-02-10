@@ -5,7 +5,7 @@ Weasel::Driver::Selenium2 - Weasel driver wrapping Selenium::Remote::Driver
 
 =head1 VERSION
 
-0.06
+0.07
 
 =head1 SYNOPSIS
 
@@ -55,7 +55,7 @@ use Carp;
 use Moose;
 with 'Weasel::DriverRole';
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 =head1 ATTRIBUTES
 
@@ -146,9 +146,10 @@ sub start {
         }
     } for (qw/browser_name remote_server_addr version platform error_handler/);
 
+#    TODO: Allow an error_handler
 #    $self->{caps}{error_handler} = \&error_handler if !defined($self->{caps}{error_handler});
 
-    my $driver = Selenium::Remote::Driver->new(%{$self->caps}, returns_exceptions => $self->returns_exceptions // 0);
+    my $driver = Selenium::Remote::Driver->new(%{$self->caps}, returns_exceptions => 1);
 
     $self->_driver($driver);
     $self->set_wait_timeout($self->wait_timeout);
@@ -230,27 +231,47 @@ sub get {
     $self->_driver->get($url);
 }
 
-=item wait_for
+=item wait_for($callback, $retry_timeout, $poll_delay, %args)
 
 =cut
 
 sub wait_for {
     my ($self, $callback, %args) = @_;
 
-    # Do NOT use Selenium::Waiter, it eats all exceptions!
     my $end = time() + $args{retry_timeout};
     my $rv;
     do {
         $rv = $callback->();
         return $rv if $rv;
 
-        sleep $args{poll_delay};
+        sleep $args{poll_delay} ;
     } until (time() > $end);
     croak "Browser timed out after " . $args{retry_timeout} . " seconds while waiting for " . $self->_driver->get_current_url if time() > $end;
 
     return;
 }
 
+
+=item wait_for_stale($link)
+
+=cut
+
+sub wait_for_stale {
+  my ($self,$link,%args) = @_;
+
+  $self->wait_for(
+      sub {
+          try {
+              # poll the link with an arbitrary call
+              $link->tag_name;
+              return 0;
+          } catch {
+            die $_ if ref($_) ne "HASH";
+            warn $_->{cmd_return}->{error}->{code} if ref($_) eq "HASH" && $_->{cmd_return}->{error}->{code} ne "STALE_ELEMENT_REFERENCE";
+            return $_->{cmd_return}->{error}->{code} eq "STALE_ELEMENT_REFERENCE";
+          }
+        },%args) if $link;
+};
 
 =item clear
 
@@ -367,6 +388,7 @@ sub set_selected {
 sub get_page_source {
     my ($self,$fh) = @_;
 
+    die "No file handle" unless $fh;
     print $fh $self->_driver->get_page_source();
 }
 
@@ -377,6 +399,7 @@ sub get_page_source {
 sub screenshot {
     my ($self, $fh) = @_;
 
+    die "No file handle" unless $fh;
     print $fh MIME::Base64::decode($self->_driver->screenshot);
 }
 
@@ -502,4 +525,3 @@ Licensed under the same terms as Perl.
 =cut
 
 1;
-
