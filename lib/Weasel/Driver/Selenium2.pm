@@ -5,7 +5,7 @@ Weasel::Driver::Selenium2 - Weasel driver wrapping Selenium::Remote::Driver
 
 =head1 VERSION
 
-0.07
+0.08
 
 =head1 SYNOPSIS
 
@@ -47,15 +47,16 @@ use warnings;
 
 use MIME::Base64;
 use Selenium::Remote::Driver;
+use Selenium::Remote::ErrorHandler;
 use Time::HiRes;
 use Weasel::DriverRole;
 use Weasel::Driver::Waiter;
-use Carp;
+use Try::Tiny qw( try catch );
 
 use Moose;
 with 'Weasel::DriverRole';
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 =head1 ATTRIBUTES
 
@@ -125,7 +126,7 @@ see L<Weasel::DriverRole>.
 =cut
 
 sub implements {
-    return '0.03';
+    return '0.08';
 }
 
 =item start
@@ -146,10 +147,7 @@ sub start {
         }
     } for (qw/browser_name remote_server_addr version platform error_handler/);
 
-#    TODO: Allow an error_handler
-#    $self->{caps}{error_handler} = \&error_handler if !defined($self->{caps}{error_handler});
-
-    my $driver = Selenium::Remote::Driver->new(%{$self->caps}, returns_exceptions => 1);
+    my $driver = Selenium::Remote::Driver->new(%{$self->caps}, error_handler => \&error_handler);
 
     $self->_driver($driver);
     $self->set_wait_timeout($self->wait_timeout);
@@ -159,31 +157,22 @@ sub start {
 
 =item error_handler
 
+The error handler currently receives two arguments:
+    - $driver object itself
+    - the exception message and stack trace in one multiline string.
+
 =cut
 
 sub error_handler {
     my ($self,$error) = @_;
-    #TODO: We expect/need to pass on STALE exceptions but should handle others from the list below
-#	NO_SUCH_ELEMENT
-#	NO_SUCH_FRAME
-#	UNKNOWN_COMMAND
-#	STALE_ELEMENT_REFERENCE
-#	ELEMENT_NOT_VISIBLE
-#	INVALID_ELEMENT_STATE
-#	UNKNOWN_ERROR
-#	ELEMENT_IS_NOT_SELECTABLE
-#	XPATH_LOOKUP_ERROR
-#	Timeout
-#	NO_SUCH_WINDOW
-#	INVALID_COOKIE_DOMAIN
-#	UNABLE_TO_SET_COOKIE
-#	UNEXPECTED_ALERT_OPEN
-#	NO_ALERT_OPEN_ERROR
-#	SCRIPT_TIMEOUT
-#	INVALID_ELEMENT_COORDINATES
-#	IME_NOT_AVAILABLE
-#	IME_ENGINE_ACTIVATION_FAILED
-#	INVALID_SELECTOR
+    if ( $error =~ /A modal dialog was open/ ) {
+        my $pwd = $self->get_alert_text();
+        if ( $pwd && $pwd =~ "Warning:  Your password will expire in" ) {
+            $self->accept_alert;
+            return undef;
+        }
+    }
+    croak $error; # Current driver behaviour is to croak. We emulate
     return $error;
 }
 
@@ -210,6 +199,7 @@ sub find_all {
 
     my @rv;
     my $_driver = $self->_driver;
+
     if ($parent_id eq '/html') {
         @rv = $_driver->find_elements($locator, $scheme // 'xpath');
     }
@@ -238,17 +228,16 @@ sub get {
 sub wait_for {
     my ($self, $callback, %args) = @_;
 
+    # Do NOT use Selenium::Waiter, it eats all exceptions!
     my $end = time() + $args{retry_timeout};
     my $rv;
     do {
         $rv = $callback->();
         return $rv if $rv;
 
-        sleep $args{poll_delay} ;
+        sleep $args{poll_delay};
     } until (time() > $end);
     croak "Browser timed out after " . $args{retry_timeout} . " seconds while waiting for " . $self->_driver->get_current_url if time() > $end;
-
-    return;
 }
 
 
@@ -327,6 +316,17 @@ sub get_attribute {
     return $self->_resolve_id($id)->get_attribute($att);
 }
 
+=item get_page_source($fh)
+
+=cut
+
+sub get_page_source {
+    my ($self,$fh) = @_;
+
+    die "No file handle" unless $fh;
+    print $fh $self->_driver->get_page_source();
+}
+
 =item get_text($id)
 
 =cut
@@ -379,17 +379,6 @@ sub set_selected {
     # The other solution is to use is_selected to verify the current state
     # and toggling by click()ing
     $self->_resolve_id($id)->set_selected($value);
-}
-
-=item get_page_source($fh)
-
-=cut
-
-sub get_page_source {
-    my ($self,$fh) = @_;
-
-    die "No file handle" unless $fh;
-    print $fh $self->_driver->get_page_source();
 }
 
 =item screenshot($fh)
@@ -464,6 +453,48 @@ sub set_window_size {
     $driver->set_window_size(split /x/, $value)
         if defined $driver;
     $self->_set_window_size($value);
+}
+
+=item alert_is_present
+
+Checks if there is a javascript alert/confirm/input on the screen.
+Returns alert text if so.
+
+=cut
+
+sub alert_is_present {
+    my ($self) = @_;
+    my $alertTxt;
+
+    eval { $alertTxt = $self->get_alert_text() };
+
+    return $alertTxt;
+}
+
+=item accept_alert
+
+Accepts the currently displayed alert dialog.  Usually, this is
+equivalent to clicking the 'OK' button in the dialog.
+
+=cut
+
+sub accept_alert {
+    my ($self) = @_;
+    $self->accept_alert;
+}
+
+=item dismiss_alert
+
+Dismisses the currently displayed alert dialog. For comfirm()
+and prompt() dialogs, this is equivalent to clicking the
+'Cancel' button. For alert() dialogs, this is equivalent to
+clicking the 'OK' button.
+
+=cut
+
+sub dismiss_alert {
+    my ($self) = @_;
+    $self->dismiss_alert;
 }
 
 =back
