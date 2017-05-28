@@ -5,7 +5,7 @@ Weasel::Driver::Selenium2 - Weasel driver wrapping Selenium::Remote::Driver
 
 =head1 VERSION
 
-0.06
+0.07
 
 =head1 SYNOPSIS
 
@@ -52,7 +52,7 @@ use Weasel::DriverRole;
 use Moose;
 with 'Weasel::DriverRole';
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 
 =head1 ATTRIBUTES
