@@ -162,8 +162,8 @@ The error handler currently receives two arguments:
 =cut
 
 sub error_handler {
-    my ($self,$error) = @_;
-    return $self->user_error_handler->($error)
+    my ($self,$driver,$error) = @_;
+    return $self->user_error_handler->($self,$error)
         if $self->has_user_error_handler;
     croak $error; # Current driver behaviour is to croak. We emulate
     return $error;
