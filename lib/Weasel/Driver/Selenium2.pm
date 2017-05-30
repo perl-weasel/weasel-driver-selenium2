@@ -154,7 +154,6 @@ sub start {
 }
 
 =item error_handler
-
 The error handler currently receives two arguments:
     - $driver object itself
     - the exception message and stack trace in one multiline string.
@@ -211,6 +210,105 @@ sub get {
     my ($self, $url) = @_;
 
     $self->_driver->get($url);
+}
+
+=item find_element_by_class
+
+=cut
+
+sub find_element_by_class {
+    my ($self, $class) = @_;
+
+    return $self->_driver->find_element_by_class($class);
+}
+
+=item find_element_by_class_name
+
+=cut
+
+sub find_element_by_class_name {
+    my ($self, $class_name) = @_;
+
+    return $self->_driver->find_element_by_class_name($class_name);
+}
+
+=item find_element_by_css
+
+=cut
+
+sub find_element_by_css {
+    my ($self, $css) = @_;
+
+    return $self->_driver->find_element_by_css($css);
+}
+
+=item find_element_by_id
+
+=cut
+
+sub find_element_by_id {
+    my ($self, $id) = @_;
+
+    return $self->_driver->find_element_by_id($id);
+}
+
+=item find_element_by_link
+
+=cut
+
+sub find_element_by_link {
+    my ($self, $link) = @_;
+
+    return $self->_driver->find_element_by_link($link);
+}
+
+=item find_element_by_link_text
+
+=cut
+
+sub find_element_by_link_text {
+    my ($self, $link_text) = @_;
+
+    return $self->_driver->find_element_by_link_text($link_text);
+}
+
+=item find_element_by_name
+
+=cut
+
+sub find_element_by_name {
+    my ($self, $name) = @_;
+
+    return $self->_driver->find_element_by_name($name);
+}
+
+=item find_element_by_partial_link_text
+
+=cut
+
+sub find_element_by_partial_link_text {
+    my ($self, $partial_link_text) = @_;
+
+    return $self->_driver->find_element_by_partial_link_text($partial_link_text);
+}
+=item find_element_by_tag_name
+
+=cut
+
+sub find_element_by_tag_name {
+    my ($self, $tag_name) = @_;
+
+    return $self->_driver->find_element_by_tag_name($tag_name);
+}
+
+=item find_element_by_xpath
+
+=cut
+
+sub find_element_by_xpath {
+    my ($self, $xpath) = @_;
+
+    return $self->_driver->find_element_by_tag_name($xpath);
 }
 
 =item wait_for
@@ -353,6 +451,7 @@ sub set_selected {
     $self->_resolve_id($id)->set_selected($value);
 }
 
+
 =item screenshot($fh)
 
 =cut
@@ -467,7 +566,6 @@ sub dismiss_alert {
     my ($self) = @_;
     $self->_driver->dismiss_alert;
 }
-
 =back
 
 =cut
@@ -527,3 +625,4 @@ Licensed under the same terms as Perl.
 =cut
 
 1;
+
