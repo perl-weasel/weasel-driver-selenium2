@@ -5,7 +5,7 @@ Weasel::Driver::Selenium2 - Weasel driver wrapping Selenium::Remote::Driver
 
 =head1 VERSION
 
-0.05
+0.06
 
 =head1 SYNOPSIS
 
@@ -47,13 +47,13 @@ use warnings;
 use MIME::Base64;
 use Selenium::Remote::Driver;
 use Time::HiRes;
+use Carp qw(croak);
 use Weasel::DriverRole;
 
 use Moose;
 with 'Weasel::DriverRole';
 
-our $VERSION = '0.05';
-
+our $VERSION = '0.06';
 
 =head1 ATTRIBUTES
 
@@ -123,7 +123,7 @@ see L<Weasel::DriverRole>.
 =cut
 
 sub implements {
-    return '0.02';
+    return '0.03';
 }
 
 =item start
@@ -142,14 +142,30 @@ sub start {
             my $capability = $self->{caps}{$capability_name} =~ /\$\{([^\}]+)\}/;
             $self->{caps}{$capability_name} = $ENV{$1} if $capability;
         }
-    } for (qw/browser_name remote_server_addr version platform/);
+    } for (qw/browser_name remote_server_addr version platform error_handler/);
 
-    my $driver = Selenium::Remote::Driver->new(%{$self->caps});
+    my $driver = Selenium::Remote::Driver->new(%{$self->caps},
+                        error_handler => sub { $self->error_handler(@_); });
 
     $self->_driver($driver);
     $self->set_wait_timeout($self->wait_timeout);
     $self->set_window_size($self->window_size);
     $self->started(1);
+}
+
+=item error_handler
+The error handler currently receives two arguments:
+    - $driver object itself
+    - the exception message and stack trace in one multiline string.
+
+=cut
+
+sub error_handler {
+    my ($self,$driver,$error) = @_;
+    return $self->user_error_handler->($self,$error)
+        if $self->has_user_error_handler;
+    croak $error; # Current driver behaviour is to croak. We emulate
+    return $error;
 }
 
 =item stop
@@ -196,6 +212,105 @@ sub get {
     $self->_driver->get($url);
 }
 
+=item find_element_by_class
+
+=cut
+
+sub find_element_by_class {
+    my ($self, $class) = @_;
+
+    return $self->_driver->find_element_by_class($class);
+}
+
+=item find_element_by_class_name
+
+=cut
+
+sub find_element_by_class_name {
+    my ($self, $class_name) = @_;
+
+    return $self->_driver->find_element_by_class_name($class_name);
+}
+
+=item find_element_by_css
+
+=cut
+
+sub find_element_by_css {
+    my ($self, $css) = @_;
+
+    return $self->_driver->find_element_by_css($css);
+}
+
+=item find_element_by_id
+
+=cut
+
+sub find_element_by_id {
+    my ($self, $id) = @_;
+
+    return $self->_driver->find_element_by_id($id);
+}
+
+=item find_element_by_link
+
+=cut
+
+sub find_element_by_link {
+    my ($self, $link) = @_;
+
+    return $self->_driver->find_element_by_link($link);
+}
+
+=item find_element_by_link_text
+
+=cut
+
+sub find_element_by_link_text {
+    my ($self, $link_text) = @_;
+
+    return $self->_driver->find_element_by_link_text($link_text);
+}
+
+=item find_element_by_name
+
+=cut
+
+sub find_element_by_name {
+    my ($self, $name) = @_;
+
+    return $self->_driver->find_element_by_name($name);
+}
+
+=item find_element_by_partial_link_text
+
+=cut
+
+sub find_element_by_partial_link_text {
+    my ($self, $partial_link_text) = @_;
+
+    return $self->_driver->find_element_by_partial_link_text($partial_link_text);
+}
+=item find_element_by_tag_name
+
+=cut
+
+sub find_element_by_tag_name {
+    my ($self, $tag_name) = @_;
+
+    return $self->_driver->find_element_by_tag_name($tag_name);
+}
+
+=item find_element_by_xpath
+
+=cut
+
+sub find_element_by_xpath {
+    my ($self, $xpath) = @_;
+
+    return $self->_driver->find_element_by_tag_name($xpath);
+}
+
 =item wait_for
 
 =cut
@@ -215,6 +330,7 @@ sub wait_for {
 
     return;
 }
+
 
 
 =item clear
@@ -335,6 +451,7 @@ sub set_selected {
     $self->_resolve_id($id)->set_selected($value);
 }
 
+
 =item screenshot($fh)
 
 =cut
@@ -408,6 +525,47 @@ sub set_window_size {
     $self->_set_window_size($value);
 }
 
+=item get_alert_text
+
+Checks if there is a javascript alert/confirm/input on the screen.
+Returns alert text if so.
+
+=cut
+
+sub get_alert_text {
+    my ($self) = @_;
+    my $alertTxt;
+
+    eval { $alertTxt = $self->_driver->get_alert_text() };
+
+    return $alertTxt;
+}
+
+=item accept_alert
+
+Accepts the currently displayed alert dialog.  Usually, this is
+equivalent to clicking the 'OK' button in the dialog.
+
+=cut
+
+sub accept_alert {
+    my ($self) = @_;
+    $self->_driver->accept_alert;
+}
+
+=item dismiss_alert
+
+Dismisses the currently displayed alert dialog. For comfirm()
+and prompt() dialogs, this is equivalent to clicking the
+'Cancel' button. For alert() dialogs, this is equivalent to
+clicking the 'OK' button.
+
+=cut
+
+sub dismiss_alert {
+    my ($self) = @_;
+    $self->_driver->dismiss_alert;
+}
 =back
 
 =cut
