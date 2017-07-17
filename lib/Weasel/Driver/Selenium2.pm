@@ -164,6 +164,17 @@ sub stop {
     $self->started(0);
 }
 
+=item find_all_displayed
+
+=cut
+
+sub find_all_displayed {
+    my $self = shift @_;
+    my @rv = $self->find_all(@_);
+    @rv = grep { $_->is_displayed } @rv;
+    return wantarray ? @rv : \@rv;
+}
+
 =item find_all
 
 =cut
@@ -183,7 +194,6 @@ sub find_all {
         @rv = $_driver->find_child_elements($parent_id, $locator,
                                             $scheme // 'xpath');
     }
-    @rv = grep { $_->is_displayed } @rv;
     return wantarray ? @rv : \@rv;
 }
 
