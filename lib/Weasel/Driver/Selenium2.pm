@@ -183,6 +183,7 @@ sub find_all {
         @rv = $_driver->find_child_elements($parent_id, $locator,
                                             $scheme // 'xpath');
     }
+    @rv = grep { $_->is_displayed } @rv;
     return wantarray ? @rv : \@rv;
 }
 
@@ -467,4 +468,3 @@ Licensed under the same terms as Perl.
 =cut
 
 1;
-
