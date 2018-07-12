@@ -5,7 +5,7 @@ Weasel::Driver::Selenium2 - Weasel driver wrapping Selenium::Remote::Driver
 
 =head1 VERSION
 
-0.06
+0.07
 
 =head1 SYNOPSIS
 
@@ -47,12 +47,13 @@ use warnings;
 use MIME::Base64;
 use Selenium::Remote::Driver;
 use Time::HiRes;
+use Carp qw(croak);
 use Weasel::DriverRole;
 
 use Moose;
 with 'Weasel::DriverRole';
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 
 =head1 ATTRIBUTES
@@ -123,7 +124,7 @@ see L<Weasel::DriverRole>.
 =cut
 
 sub implements {
-    return '0.02';
+    return '0.03';
 }
 
 =item start
@@ -406,6 +407,48 @@ sub set_window_size {
     $driver->set_window_size(split /x/, $value)
         if defined $driver;
     $self->_set_window_size($value);
+}
+
+=item get_alert_text
+
+Checks if there is a javascript alert/confirm/input on the screen.
+Returns alert text if so.
+
+=cut
+
+sub get_alert_text {
+    my ($self) = @_;
+    my $alertTxt;
+
+    eval { $alertTxt = $self->_driver->get_alert_text() };
+
+    return $alertTxt;
+}
+
+=item accept_alert
+
+Accepts the currently displayed alert dialog.  Usually, this is
+equivalent to clicking the 'OK' button in the dialog.
+
+=cut
+
+sub accept_alert {
+    my ($self) = @_;
+    $self->_driver->accept_alert;
+}
+
+=item dismiss_alert
+
+Dismisses the currently displayed alert dialog. For comfirm()
+and prompt() dialogs, this is equivalent to clicking the
+'Cancel' button. For alert() dialogs, this is equivalent to
+clicking the 'OK' button.
+
+=cut
+
+sub dismiss_alert {
+    my ($self) = @_;
+    $self->_driver->dismiss_alert;
 }
 
 =back
