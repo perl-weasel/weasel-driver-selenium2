@@ -22,6 +22,9 @@ allow = for if until while
 [Modules::ProhibitEvilModules]
 modules = Carp::Always Data::Dumper Data::Printer
 
+[Subroutines::RequireArgUnpacking]
+allow_delegation_to = execute_script
+
 [Variables::ProhibitPunctuationVars]
 string_mode = thorough
 
