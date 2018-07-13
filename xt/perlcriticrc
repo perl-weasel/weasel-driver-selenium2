@@ -11,7 +11,7 @@ color =  1
 pager = less
 
 theme     =
-exclude   = 'OTRS::' CodeLayout::RequireTidyCode RegularExpressions::RequireLineBoundaryMatching RegularExpressions::RequireDotMatchAnything RegularExpressions::ProhibitEscapedMetacharacters RegularExpressions::RequireBracesForMultiline
+exclude   = 'OTRS::' CodeLayout::RequireTidyCode RegularExpressions::RequireLineBoundaryMatching RegularExpressions::RequireDotMatchAnything RegularExpressions::ProhibitEscapedMetacharacters RegularExpressions::RequireBracesForMultiline Documentation::RequirePodAtEnd
 
 [CodeLayout::ProhibitHardTabs]
 allow_leading_tabs = 0
