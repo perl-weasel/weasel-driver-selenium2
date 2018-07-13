@@ -278,7 +278,7 @@ sub get_attribute {
 sub get_page_source {
     my ($self,$fh) = @_;
 
-    print $fh $self->_driver->get_page_source();
+    print {$fh} $self->_driver->get_page_source();
 }
 
 =item get_text($id)
@@ -342,7 +342,7 @@ sub set_selected {
 sub screenshot {
     my ($self, $fh) = @_;
 
-    print $fh MIME::Base64::decode($self->_driver->screenshot);
+    print {$fh} MIME::Base64::decode($self->_driver->screenshot);
 }
 
 =item send_keys($element_id, @keys)
