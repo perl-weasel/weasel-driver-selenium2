@@ -1,19 +1,40 @@
-severity  = 5
+# Fail if listed policy modules are not available
+#profile-strictness = fatal
+
+# 1 is the most strict setting, which is the
+# default when only == 1
+severity = 1
+
+verbose =%s %p %f   %l\n
+#verbose =%f %p   %l  (%s)\n
+color =  1
+pager = less
+
 theme     =
-exclude   = 'OTRS::'
+exclude   = 'OTRS::' CodeLayout::RequireTidyCode RegularExpressions::RequireLineBoundaryMatching RegularExpressions::RequireDotMatchAnything RegularExpressions::ProhibitEscapedMetacharacters
+
+[CodeLayout::ProhibitHardTabs]
+allow_leading_tabs = 0
+
+[ControlStructures::ProhibitPostfixControls]
+allow = for if until while
 
 [Modules::ProhibitEvilModules]
-modules = Carp::Always Data::Dumper
+modules = Carp::Always Data::Dumper Data::Printer
+
+[Variables::ProhibitPunctuationVars]
+string_mode = thorough
 
 #--------------------------------------------------------------
 # I think these are really important, so always load them
- 
+
 [TestingAndDebugging::RequireUseStrict]
-severity = 5
- 
+severity = 1
+
 [TestingAndDebugging::RequireUseWarnings]
-severity = 5
- 
+severity = 1
+
 #--------------------------------------------------------------
 # For all other Policies, I accept the default severity,
 # so no additional configuration is required for them.
+
