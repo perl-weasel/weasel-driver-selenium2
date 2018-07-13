@@ -214,7 +214,7 @@ sub wait_for {
         return $rv if $rv;
 
         sleep $args{poll_delay};
-    } until (time() > $end);
+    } while (time() <= $end);
 
     return;
 }
