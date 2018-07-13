@@ -159,7 +159,7 @@ sub start {
     $self->_driver($driver);
     $self->set_wait_timeout($self->wait_timeout);
     $self->set_window_size($self->window_size);
-    $self->started(1);
+    return $self->started(1);
 }
 
 =item stop
@@ -171,7 +171,7 @@ sub stop {
     my $driver = $self->_driver;
 
     $driver->quit if defined $driver;
-    $self->started(0);
+    return $self->started(0);
 }
 
 =item find_all
@@ -203,7 +203,7 @@ sub find_all {
 sub get {
     my ($self, $url) = @_;
 
-    $self->_driver->get($url);
+    return $self->_driver->get($url);
 }
 
 =item wait_for
@@ -234,7 +234,7 @@ sub wait_for {
 sub clear {
     my ($self, $id) = @_;
 
-    $self->_resolve_id($id)->clear;
+    return $self->_resolve_id($id)->clear;
 }
 
 =item click
@@ -245,10 +245,10 @@ sub click {
     my ($self, $element_id) = @_;
 
     if (defined $element_id) {
-        $self->_scroll($self->_resolve_id($element_id))->click;
+        return $self->_scroll($self->_resolve_id($element_id))->click;
     }
     else {
-        $self->_driver->click;
+        return $self->_driver->click;
     }
 }
 
@@ -259,7 +259,7 @@ sub click {
 sub dblclick {
     my ($self) = @_;
 
-    $self->_driver->dblclick;
+    return $self->_driver->dblclick;
 }
 
 =item execute_script
@@ -268,7 +268,7 @@ sub dblclick {
 
 sub execute_script {
     my $self = shift;
-    $self->_driver->execute_script(@_);
+    return $self->_driver->execute_script(@_);
 }
 
 =item get_attribute($id, $att_name)
@@ -290,6 +290,7 @@ sub get_page_source {
 
     print {$fh} $self->_driver->get_page_source()
        or croak "error saving page source: $ERRNO";
+    return;
 }
 
 =item get_text($id)
@@ -319,7 +320,7 @@ sub is_displayed {
 sub set_attribute {
     my ($self, $id, $att, $value) = @_;
 
-    $self->_resolve_id($id)->set_attribute($att, $value);
+    return $self->_resolve_id($id)->set_attribute($att, $value);
 }
 
 =item get_selected($id)
@@ -343,7 +344,7 @@ sub set_selected {
     # as long as it's there... why not?
     # The other solution is to use is_selected to verify the current state
     # and toggling by click()ing
-    $self->_resolve_id($id)->set_selected($value);
+    return $self->_resolve_id($id)->set_selected($value);
 }
 
 =item screenshot($fh)
@@ -355,6 +356,7 @@ sub screenshot {
 
     print {$fh} MIME::Base64::decode($self->_driver->screenshot)
         or croak "error saving screenshot: $ERRNO";
+    return;
 }
 
 =item send_keys($element_id, @keys)
@@ -400,7 +402,7 @@ sub set_wait_timeout {
 
     $driver->set_implicit_wait_timeout($value)
         if defined $driver;
-    $self->_set_wait_timeout($value);
+    return $self->_set_wait_timeout($value);
 }
 
 =item set_window_size
@@ -417,7 +419,7 @@ sub set_window_size {
 
     $driver->set_window_size(split /x/, $value)
         if defined $driver;
-    $self->_set_window_size($value);
+    return $self->_set_window_size($value);
 }
 
 =back
