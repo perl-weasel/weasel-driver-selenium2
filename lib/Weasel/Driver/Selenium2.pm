@@ -141,8 +141,9 @@ sub start {
     do {
         if ( defined  $self->{caps}{$_}) {
             my $capability_name = $_;
-            my $capability = $self->{caps}{$capability_name} =~ /\$\{([^\}]+)\}/;
-            $self->{caps}{$capability_name} = $ENV{$1} if $capability;
+            if ( $self->{caps}{$capability_name} =~ /\$\{([^\}]+)\}/ ) {
+              $self->{caps}{$capability_name} = $ENV{$1};
+            }
         }
     } for (qw/browser_name remote_server_addr version platform/);
 
