@@ -443,6 +443,8 @@ sub _scroll {
     return $id;
 }
 
+__PACKAGE__->meta()->make_immutable();
+
 =head1 CONTRIBUTORS
 
 Erik Huelsmann
