@@ -107,7 +107,8 @@ session is stopped and started or restarted.
 
 has 'caps' => (is => 'ro',
                isa => 'HashRef',
-               required => 1);
+               required => 1,
+              );
 
 =back
 
