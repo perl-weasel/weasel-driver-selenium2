@@ -144,7 +144,11 @@ sub start {
     do {
         if ( defined  $self->{caps}{$_}) {
             my $capability_name = $_;
-            if ( $self->{caps}{$capability_name} =~ /\$\{([^\}]+)\}/ ) {
+            if ( $self->{caps}{$capability_name} =~
+                  /\$\{             # a dollar sign nd opening brace
+                   ([^\}]+)         # any character not a closing brace
+                   \}/x             # a closing brace
+                ) {
               $self->{caps}{$capability_name} = $ENV{$1};
             }
         }
