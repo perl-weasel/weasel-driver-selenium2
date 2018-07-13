@@ -49,6 +49,7 @@ use Selenium::Remote::Driver;
 use Time::HiRes;
 use Weasel::DriverRole;
 use Carp;
+use English qw(-no_match_vars);
 
 use Moose;
 with 'Weasel::DriverRole';
@@ -282,7 +283,7 @@ sub get_page_source {
     my ($self,$fh) = @_;
 
     print {$fh} $self->_driver->get_page_source()
-       or croak "error saving page source: $!";
+       or croak "error saving page source: $ERRNO";
 }
 
 =item get_text($id)
@@ -347,7 +348,7 @@ sub screenshot {
     my ($self, $fh) = @_;
 
     print {$fh} MIME::Base64::decode($self->_driver->screenshot)
-        or croak "error saving screenshot: $!";
+        or croak "error saving screenshot: $ERRNO";
 }
 
 =item send_keys($element_id, @keys)
