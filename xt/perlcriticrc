@@ -22,11 +22,13 @@ allow_leading_tabs = 0
 [ControlStructures::ProhibitPostfixControls]
 allow = for if until while
 
-[Documentation::PodSpelling]
-spell_command = aspell list
+[-Documentation::PodSpelling]
 
 [-Documentation::RequirePodAtEnd]
 [-Documentation::RequirePodLinksIncludeText]
+
+[Documentation::RequirePodSections]
+lib_sections = NAME | VERSION | SYNOPSIS | DESCRIPTION | DEPENDENCIES | SUBROUTINES/METHODS | AUTHOR | BUGS AND LIMITATIONS | SOURCE | LICENSE AND COPYRIGHT
 
 [Modules::ProhibitEvilModules]
 modules = Carp::Always Data::Dumper Data::Printer

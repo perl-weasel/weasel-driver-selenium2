@@ -39,6 +39,14 @@ Selenium::Remote::Driver.
 
 =cut
 
+
+=head1 DEPENDENCIES
+
+This module wraps L<Selenium::Remote::Driver>, version 2.
+
+=cut
+
+
 package Weasel::Driver::Selenium2;
 
 use strict;
@@ -145,7 +153,7 @@ sub start {
         if ( defined  $self->{caps}{$_}) {
             my $capability_name = $_;
             if ( $self->{caps}{$capability_name} =~
-                  /\$\{             # a dollar sign nd opening brace
+                  /\$\{             # a dollar sign and opening brace
                    ([^\}]+)         # any character not a closing brace
                    \}/x             # a closing brace
                 ) {
@@ -381,7 +389,7 @@ sub tag_name {
 
 =back
 
-=head1 METHODS
+=head1 SUBROUTINES/METHODS
 
 This module implements the following methods in addition to the
 Weasel::DriverRole protocol methods:
@@ -451,15 +459,20 @@ sub _scroll {
 
 __PACKAGE__->meta()->make_immutable();
 
+=head1 AUTHOR
+
+Erik Huelsmann
+
 =head1 CONTRIBUTORS
 
 Erik Huelsmann
+Yves Lavoie
 
 =head1 MAINTAINERS
 
 Erik Huelsmann
 
-=head1 BUGS
+=head1 BUGS AND LIMITATIONS
 
 Bugs can be filed in the GitHub issue tracker for the Weasel project:
  https://github.com/perl-weasel/weasel-driver-selenium2/issues
@@ -474,7 +487,7 @@ The source code repository for Weasel is at
 Community support is available through
 L<perl-weasel@googlegroups.com|mailto:perl-weasel@googlegroups.com>.
 
-=head1 COPYRIGHT
+=head1 LICENSE AND COPYRIGHT
 
  (C) 2016  Erik Huelsmann
 
