@@ -44,6 +44,8 @@ package Weasel::Driver::Selenium2;
 use strict;
 use warnings;
 
+use namespace::autoclean;
+
 use MIME::Base64;
 use Selenium::Remote::Driver;
 use Time::HiRes;
