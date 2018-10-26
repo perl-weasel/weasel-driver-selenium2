@@ -5,7 +5,7 @@ Weasel::Driver::Selenium2 - Weasel driver wrapping Selenium::Remote::Driver
 
 =head1 VERSION
 
-0.06
+0.08
 
 =head1 SYNOPSIS
 
@@ -64,7 +64,7 @@ use English qw(-no_match_vars);
 use Moose;
 with 'Weasel::DriverRole';
 
-our $VERSION = '0.06';
+our $VERSION = '0.08';
 
 
 =head1 ATTRIBUTES
@@ -136,13 +136,14 @@ see L<Weasel::DriverRole>.
 =cut
 
 sub implements {
-    return '0.02';
+    return '0.03';
 }
 
 =item start
 
 A few capabilities can be specified in t/.pherkin.yaml
 Some can even be specified as environment variables, they will be expanded here if present.
+Revised for Selenium3. See https://github.com/teodesian/Selenium-Remote-Driver#no-standalone-server
 
 =cut
 
@@ -286,7 +287,21 @@ sub execute_script {
 sub get_attribute {
     my ($self, $id, $att) = @_;
 
-    return $self->_resolve_id($id)->get_attribute($att);
+    return $self->_resolve_id($id)->get_attribute($att, 1);
+}
+
+=item get_property($id, $prop_name)
+
+With Selenium 2, the method WebElement.GetAttribute(...) returned the HTMLElement
+property when present and the attribute otherwise.
+The methods are separated in Selenium 3
+
+=cut
+
+sub get_property {
+    my ($self, $id, $property) = @_;
+
+    return $self->_resolve_id($id)->get_property($property);
 }
 
 =item get_page_source($fh)
