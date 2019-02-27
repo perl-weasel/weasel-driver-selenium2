@@ -5,7 +5,7 @@ Weasel::Driver::Selenium2 - Weasel driver wrapping Selenium::Remote::Driver
 
 =head1 VERSION
 
-0.06
+0.07
 
 =head1 SYNOPSIS
 
@@ -465,8 +465,13 @@ Erik Huelsmann
 
 =head1 CONTRIBUTORS
 
-Erik Huelsmann
-Yves Lavoie
+=over
+
+=item Erik Huelsmann
+
+=item Yves Lavoie
+
+=back
 
 =head1 MAINTAINERS
 
@@ -489,7 +494,7 @@ L<perl-weasel@googlegroups.com|mailto:perl-weasel@googlegroups.com>.
 
 =head1 LICENSE AND COPYRIGHT
 
- (C) 2016  Erik Huelsmann
+ (C) 2016-2019  Erik Huelsmann
 
 Licensed under the same terms as Perl.
 
