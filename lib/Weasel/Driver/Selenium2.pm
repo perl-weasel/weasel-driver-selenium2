@@ -338,7 +338,7 @@ sub set_attribute {
 sub get_selected {
     my ($self, $id) = @_;
 
-    return $self->_resolve_id($id)->get_selected;
+    return $self->_resolve_id($id)->is_selected;
 }
 
 =item set_selected($id, $value)
