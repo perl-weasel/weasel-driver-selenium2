@@ -5,7 +5,7 @@ Weasel::Driver::Selenium2 - Weasel driver wrapping Selenium::Remote::Driver
 
 =head1 VERSION
 
-0.09
+0.10
 
 =head1 SYNOPSIS
 
@@ -291,7 +291,7 @@ sub execute_script {
 sub get_attribute {
     my ($self, $id, $att) = @_;
 
-    return $self->_resolve_id($id)->get_attribute($att);
+    return $self->_resolve_id($id)->get_attribute($att,1);
 }
 
 =item get_page_source($fh)
