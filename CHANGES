@@ -1,3 +1,7 @@
+** 0.10 / 2019-07-01
+   - Force compatibility with JSONWIRE for new FF & Chrome
+     get_attribute won't try to separate attribute and properties
+
 ** 0.09 / 2019-06-25
    - Use high-resolution timings from Time::HiRes by actually
      importing time() and sleep()
