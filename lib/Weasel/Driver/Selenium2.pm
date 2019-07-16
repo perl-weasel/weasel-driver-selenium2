@@ -58,7 +58,7 @@ use MIME::Base64;
 use Selenium::Remote::Driver;
 use Time::HiRes qw/ time sleep /;
 use Weasel::DriverRole;
-use Carp;
+use Carp::Clan qw(^Weasel::);
 use English qw(-no_match_vars);
 
 use Moose;
