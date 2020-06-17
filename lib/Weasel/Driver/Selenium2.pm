@@ -64,7 +64,7 @@ use English qw(-no_match_vars);
 use Moose;
 with 'Weasel::DriverRole';
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
 
 =head1 ATTRIBUTES
@@ -463,7 +463,11 @@ sub _resolve_id {
 sub _scroll {
     my ($self, $id) = @_;
 
-    $self->_driver->execute_script('arguments[0].scrollIntoView(true);',
+    $self->_driver->execute_script('arguments[0].scrollIntoView('
+                                 . '{block: "center", '
+                                 .  'inline: "center", '
+                                 .  'behavior: "smooth"'
+                                 . '});',
                                    $id);
     return $id;
 }
@@ -512,4 +516,3 @@ Licensed under the same terms as Perl.
 =cut
 
 1;
-
