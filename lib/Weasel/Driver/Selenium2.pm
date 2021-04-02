@@ -299,10 +299,10 @@ sub get_attribute {
 
     my $element = $self->_resolve_id($id);
     my $value;
-    $value = $element ->get_attribute($att)  # Try with property/attribute
+    $value = $element->get_attribute($att)  # Try with property/attribute
         if $self->_driver->{is_wd3};
     return $value
-        // $element ->get_attribute($att,1); # Force using attribute
+        // $element->get_attribute($att,1); # Force using attribute
 }
 
 =item get_page_source($fh)
