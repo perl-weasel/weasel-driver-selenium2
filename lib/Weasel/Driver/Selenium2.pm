@@ -393,6 +393,36 @@ sub send_keys {
     return $self->_resolve_id($element_id)->send_keys(@keys);
 }
 
+=item key_up($element_id, @keys)
+
+=cut
+
+sub key_up {
+    my ($self, $element_id, @keys) = @_;
+
+    if (defined $element_id) {
+        return $self->_resolve_id($element_id)->key_up(@keys);
+    }
+    else {
+        return $self->_driver->key_up(@keys);
+    }
+}
+
+=item key_down($element_id, @keys)
+
+=cut
+
+sub key_down {
+    my ($self, $element_id, @keys) = @_;
+
+    if (defined $element_id) {
+        return $self->_resolve_id($element_id)->key_down(@keys);
+    }
+    else {
+        return $self->_driver->key_down(@keys);
+    }
+}
+
 =item tag_name($elem)
 
 =cut
