@@ -3,10 +3,6 @@
 
 Weasel::Driver::Selenium2 - Weasel driver wrapping Selenium::Remote::Driver
 
-=head1 VERSION
-
-0.12
-
 =head1 SYNOPSIS
 
   use Weasel;
@@ -63,9 +59,6 @@ use English qw(-no_match_vars);
 
 use Moose;
 with 'Weasel::DriverRole';
-
-our $VERSION = '0.12';
-
 
 =head1 ATTRIBUTES
 
@@ -334,7 +327,22 @@ sub get_text {
 sub is_displayed {
     my ($self, $id) = @_;
 
-    return $self->_resolve_id($id)->is_displayed;
+    my $script = <<~'SCRIPT';
+      var elm = arguments[0];
+
+      if (!elm) return false;
+      var style = window.getComputedStyle(elm);
+      if (style.display === 'none') return false;
+      if (style.visibility === 'hidden') return false;
+      if (style.opacity === '0') return false;
+
+      if (elm.offsetWidth === 0 || elm.offsetHeight === 0) return false;
+      var rect = elm.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return false;
+
+      return true;
+      SCRIPT
+    return $self->execute_script($script, $self->_resolve_id($id));
 }
 
 =item set_attribute($id, $att_name, $value)
