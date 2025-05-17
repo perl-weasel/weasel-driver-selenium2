@@ -175,6 +175,17 @@ sub stop {
     return $self->started(0);
 }
 
+=item find_all_displayed
+
+=cut
+
+sub find_all_displayed {
+    my $self = shift @_;
+    my @rv = $self->find_all(@_);
+    @rv = grep { $_->is_displayed } @rv;
+    return wantarray ? @rv : \@rv;
+}
+
 =item find_all
 
 =cut
