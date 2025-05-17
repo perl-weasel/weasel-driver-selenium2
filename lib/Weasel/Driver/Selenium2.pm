@@ -294,8 +294,14 @@ sub get_attribute {
     my $value;
     $value = $element->get_attribute($att)  # Try with property/attribute
         if $self->_driver->{is_wd3};
-    return $value
-        // $element->get_attribute($att,1); # Force using attribute
+    if (ref $value) {
+        # there is a bug in Selenium::Remote::Driver which returns a
+        # hash reference when asked for an element's "id", in some cases
+        # when running against a WebDriver 3 implementation
+        $value = undef;
+    }
+    $value //= $element->get_attribute($att,1); # Force using attribute
+    return $value;
 }
 
 =item get_page_source($fh)
